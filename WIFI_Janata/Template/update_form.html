@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      .container {
+        font-family: "Arial", sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100%;
+      }
+
+      .form-container {
+        background-color: #ffeaea;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+        width: 400px;
+        margin-left: 150px;
+      }
+
+      .form-container h2 {
+        text-align: center;
+        color: #333;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      label {
+        margin-bottom: 8px;
+        color: #333;
+      }
+
+      input {
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 14px;
+      }
+
+      button {
+        background-color: #3498db;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+      .navbar-brand {
+        padding-left: 15px; /* Adjust the value according to your preference */
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a class="navbar-brand" href="{% url 'home' %}">Wifi Janata</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'data' %}">Edit Data</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'chart' %}">Chart</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="form-container">
+        <h2>Add Your Record</h2>
+        <form action="{% url 'uprec' update.id %}" method="post">
+          {% csrf_token %}
+          <label for="date">Date:</label>
+          <input type="text" id="date" name="date" placeholder="ex: 2020-01-15"
+          value="{{update.Date|date:"Y-m-d" }}" required />
+          <label for="tradecode">Trade Code</label>
+          <input
+            type="text"
+            id="tradecode"
+            name="tradecode"
+            placeholder="ex: 1JANATAMF"
+            value="{{update.TradeCode}}"
+            required
+          />
+          <label for="high">High</label>
+          <input
+            type="text"
+            id="high"
+            name="high"
+            value="{{update.High}}"
+            required
+          />
+
+          <label for="low">Low</label>
+          <input
+            type="text"
+            id="low"
+            name="low"
+            value="{{update.Low}}"
+            required
+          />
+
+          <label for="open">Open</label>
+          <input
+            type="text"
+            id="open"
+            name="open"
+            value="{{update.Open}}"
+            required
+          />
+
+          <label for="close">Close</label>
+          <input
+            type="text"
+            id="close"
+            name="close"
+            value="{{update.Close}}"
+            required
+          />
+
+          <label for="volume">Volume</label>
+          <input
+            type="text"
+            id="volume"
+            name="volume"
+            value="{{update.Volume}}"
+            required
+          />
+          <button type="submit">Update Record</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chart</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        
+      }
+        form {
+            width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+      .chartMenu {
+        width: 100vw;
+        height: 40px;
+        background: #1a1a1a;
+        color: rgba(54, 162, 235, 1);
+      }
+      .chartMenu p {
+        padding: 10px;
+        font-size: 20px;
+      }
+      .chartCard {
+        width: 100vw;
+        height: calc(100vh - 40px);
+        background: rgba(117, 112, 255, 0.2);
+        display: flex;
+        flex-direction: column;
+        gap: 100px;
+        align-items: center;
+        justify-content: center;
+      }
+      .chartBox {
+        width: 700px;
+        padding: 20px;
+        border-radius: 20px;
+        border: solid 3px rgba(54, 162, 235, 1);
+        background: white;
+      }
+      .navbar-brand {
+        padding-left: 15px; /* Adjust the value according to your preference */
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+      <a class="navbar-brand" href="{% url 'home' %}">Wifi Janata</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'data' %}">Edit Data</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'chart' %}">Chart</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="chartCard">
+        <form method="get" action="{% url 'chart' %}">
+        <label for="tradeCode">Select Trade Code:</label>
+        <select name="TradeCode" id="tradeCode">
+            <option value="1JANATAMF" {% if selected_trade_code == '1JANATAMF' %}selected{% endif %}>1JANATAMF</option>
+            <option value="1STPRIMFMF" {% if selected_trade_code == '1STPRIMFMF' %}selected{% endif %}>1STPRIMFMF</option>
+            <option value="AAMRANET" {% if selected_trade_code == 'AAMRANET' %}selected{% endif %}>AAMRANET</option>
+            <option value="ABB1STMF" {% if selected_trade_code == 'ABB1STMF' %}selected{% endif %}>ABB1STMF</option>
+            <option value="ABBANK" {% if selected_trade_code == 'ABBANK' %}selected{% endif %}>ABBANK</option>
+            <option value="ACFL" {% if selected_trade_code == 'ACFL' %}selected{% endif %}>ACFL</option>
+            <option value="ACI" {% if selected_trade_code == 'ACI' %}selected{% endif %}>ACI</option>
+            <option value="ACIFORMULA" {% if selected_trade_code == 'ACIFORMULA' %}selected{% endif %}>ACIFORMULA</option>
+            <option value="ACIFORMULA" {% if selected_trade_code == 'ACIFORMULA' %}selected{% endif %}>ACIFORMULA</option>
+
+        </select>
+        <input type="submit" value="Submit">
+        </form>
+      <div class="chartBox">
+        <canvas id="myChart"></canvas>
+      </div>
+    </div>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"
+    ></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <script>
+      // setup
+        
+
+      const data = {
+        labels: {{date|safe}},
+        datasets: [
+          {
+            label: "Date vs Close and Volume ",
+            data: {{close|safe}},
+            backgroundColor: [
+              "rgba(255, 26, 104, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+              "rgba(0, 0, 0, 0.2)",
+            ],
+            borderColor: [
+              "rgba(255, 26, 104, 1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+              "rgba(0, 0, 0, 1)",
+            ],
+            borderWidth: 1,
+            type:'line',
+          },
+        ],
+        datasets: [
+          {
+            label: "Close ",
+            data: {{close|safe}},
+            backgroundColor: [
+              "rgba(255, 26, 104, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+              "rgba(0, 0, 0, 0.2)",
+            ],
+            borderColor: [
+              "rgba(255, 26, 104, 1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+              "rgba(0, 0, 0, 1)",
+            ],
+            borderWidth: 1,
+            type:'line',
+            yAxisID:'y'
+
+          },
+          { 
+            label:'Volume',
+            data: {{volume|safe}},
+            backgroundColor: [
+              "rgba(255, 26, 104, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              
+            ],
+            borderColor: [
+              "rgba(255, 26, 104, 1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+            
+            ],
+            borderWidth: 1,
+            type:'bar',
+            yAxisID:'y1',
+          },
+        ],
+      };
+
+      // config
+      const config = {
+        data,
+        options: {
+          scales: {
+            x: {
+              type: "time",
+              time: {
+                unit: "day",
+              },
+            },
+            y: {
+              beginAtZero: true,
+              position:'left',
+            },
+            y1:{
+                beginAtZero: true,
+                position:'right',
+            }
+          },
+        },
+      };
+
+      // render init block
+      const myChart = new Chart(document.getElementById("myChart"), config);
+
+      // Instantly assign Chart.js version
+      const chartVersion = document.getElementById("chartVersion");
+      chartVersion.innerText = Chart.version;
+    </script>
+  </body>
+</html>
